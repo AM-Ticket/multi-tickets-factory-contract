@@ -16,7 +16,7 @@ pub struct NFTFactory {
 }
 
 const NO_DEPOSIT: u128 = 0;
-const MIN_ATTACHED_BALANCE: u128 = 3_500_000_000_000_000_000_000_000;
+const MIN_ATTACHED_BALANCE: u128 = 5_000_000_000_000_000_000_000_000;
 const MAX_GAS: Gas = Gas(80_000_000_000_000);
 
 #[derive(BorshSerialize, BorshStorageKey)]
@@ -55,7 +55,7 @@ impl NFTFactory {
             .transfer(attached_deposit)
             .function_call(
                 "new_default_meta".to_string(),
-                json!({"owner_id": caller_id}).to_string().into_bytes(),
+                json!({"owner_id": caller_id, "treasury_id": caller_id}).to_string().into_bytes(),
                 NO_DEPOSIT,
                 MAX_GAS
             );
@@ -64,10 +64,8 @@ impl NFTFactory {
     #[payable]
     pub fn create(&mut self, 
         subaccount: String, 
-        metadata: NFTContractMetadata, 
-        token_metadata: TokenMetadata,
-        minting_price: U128,
-        perpetual_royalties: Option<HashMap<AccountId, u32>>
+        metadata: NFTContractMetadata,
+        transaction_fee: u16
     ) {
         let attached_deposit = env::attached_deposit();
         let caller_id = env::predecessor_account_id();
@@ -90,10 +88,9 @@ impl NFTFactory {
                 "new".to_string(),
                 json!({
                     "owner_id": caller_id, 
-                    "metadata": metadata, 
-                    "token_metadata": token_metadata,
-                    "minting_price": minting_price,
-                    "perpetual_royalties": perpetual_royalties
+                    "treasury_id": caller_id,
+                    "metadata": metadata,
+                    "current_fee": transaction_fee
                 }).to_string().into_bytes(),
                 NO_DEPOSIT,
                 MAX_GAS
