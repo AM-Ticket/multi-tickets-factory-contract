@@ -1,10 +1,8 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::{UnorderedSet}; 
 use near_sdk::{env, near_bindgen, AccountId, BorshStorageKey, PanicOnDefault, Promise, Gas, PublicKey}; 
-use std::collections::HashMap;
 use serde_json::json; 
-use near_contract_standards::non_fungible_token::metadata::{NFTContractMetadata, TokenMetadata};
-use near_sdk::json_types::U128;
+use near_contract_standards::non_fungible_token::metadata::NFTContractMetadata ;
 
 const CODE: &[u8] = include_bytes!("../res/non_fungible_token.wasm"); 
 
@@ -44,7 +42,7 @@ impl NFTFactory {
             "Error: subaccount already exist"
         );
 
-        let contract_account_id: AccountId = AccountId::from(format!("{}.{}", subaccount, env::current_account_id()).parse().unwrap());
+        let contract_account_id: AccountId = format!("{}.{}", subaccount, env::current_account_id()).parse().unwrap();
 
         self.subaccounts.insert(&subaccount);
 
@@ -75,7 +73,7 @@ impl NFTFactory {
             "Error: subaccount already exist"
         );
 
-        let contract_account_id: AccountId = AccountId::from(format!("{}.{}", subaccount, env::current_account_id()).parse().unwrap());
+        let contract_account_id: AccountId = format!("{}.{}", subaccount, env::current_account_id()).parse().unwrap();
 
         self.subaccounts.insert(&subaccount);
 
